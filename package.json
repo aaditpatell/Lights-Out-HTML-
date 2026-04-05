@@ -1,0 +1,12 @@
+{
+  "name": "lights-out-game",
+  "version": "1.0.0",
+  "description": "A 3x3 lights out puzzle game",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 3000"
+  },
+  "keywords": ["puzzle", "game", "lights-out"],
+  "author": "Aadit Patel",
+  "license": "MIT"
+}

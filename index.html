@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lights Out - Puzzle Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            text-align: center;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        .game-wrapper {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #ffd700;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .grid-container {
+            display: inline-grid;
+            grid-template-columns: repeat(3, 80px);
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            background: #333;
+        }
+
+        .cell.on {
+            background: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            border-color: #ffed4e;
+        }
+
+        .cell.off {
+            background: #1a1a2e;
+            border-color: #444;
+        }
+
+        .cell:hover {
+            transform: scale(1.05);
+            border-color: #ffd700;
+        }
+
+        .cell.on:hover {
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #ffd700;
+            background: transparent;
+            color: #ffd700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .hint-btn {
+            padding: 10px 20px;
+            font-size: 0.9em;
+        }
+
+        .new-game-btn {
+            padding: 12px 28px;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ffed4e;
+            min-height: 30px;
+            animation: pulse 0.6s ease;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .moves {
+            font-size: 1.2em;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.85em;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .grid-container {
+                grid-template-columns: repeat(3, 70px);
+                gap: 8px;
+            }
+
+            .cell {
+                width: 70px;
+                height: 70px;
+                font-size: 20px;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LIGHTS OUT</h1>
+        <p class="subtitle">click cells to toggle lights</p>
+
+        <div class="game-wrapper">
+            <div class="moves">Moves: <span id="moveCount">0</span></div>
+            <div class="status" id="status">Playing</div>
+
+            <div class="grid-container" id="gridContainer"></div>
+
+            <div class="controls">
+                <button class="new-game-btn" onclick="newGame()">New Game</button>
+                <button class="hint-btn" onclick="hint()">Hint</button>
+            </div>
+
+            <div class="message" id="message"></div>
+        </div>
+
+        <div class="footer">
+            <p>A 3x3 grid puzzle game. Turn all lights off to win.</p>
+            <p>Click a cell to toggle it and its neighbors (up, down, left, right).</p>
+        </div>
+    </div>
+
+    <script>
+        // Create audio context for sound generation
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playClickSound() {
+            const now = audioContext.currentTime;
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+            osc.type = 'sine';
+
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+            osc.start(now);
+            osc.stop(now + 0.1);
+        }
+
+        function playWinSound() {
+            const now = audioContext.currentTime;
+            const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
+
+            notes.forEach((freq, index) => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                osc.frequency.setValueAtTime(freq, now + index * 0.15);
+                osc.type = 'sine';
+
+                gain.gain.setValueAtTime(0.3, now + index * 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + index * 0.15 + 0.3);
+
+                osc.start(now + index * 0.15);
+                osc.stop(now + index * 0.15 + 0.3);
+            });
+        }
+
+        let grid = [];
+        let moveCount = 0;
+        const gridSize = 3;
+
+        function initializeGame() {
+            // Start with all lights off
+            grid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(false));
+
+            // Apply 2-4 random moves to generate puzzle
+            const numMoves = Math.floor(Math.random() * 3) + 2;
+            for (let i = 0; i < numMoves; i++) {
+                const row = Math.floor(Math.random() * gridSize);
+                const col = Math.floor(Math.random() * gridSize);
+                toggleCell(row, col);
+            }
+
+            moveCount = 0;
+            updateDisplay();
+        }
+
+        function toggleCell(row, col) {
+            grid[row][col] = !grid[row][col];
+
+            // Toggle neighbors
+            if (row > 0) grid[row - 1][col] = !grid[row - 1][col];
+            if (row < gridSize - 1) grid[row + 1][col] = !grid[row + 1][col];
+            if (col > 0) grid[row][col - 1] = !grid[row][col - 1];
+            if (col < gridSize - 1) grid[row][col + 1] = !grid[row][col + 1];
+        }
+
+        function cellClicked(row, col) {
+            playClickSound();
+            toggleCell(row, col);
+            moveCount++;
+            updateDisplay();
+        }
+
+        function isGameWon() {
+            return grid.every(row => row.every(cell => !cell));
+        }
+
+        function updateDisplay() {
+            // Update grid visual
+            const gridContainer = document.getElementById('gridContainer');
+            gridContainer.innerHTML = '';
+
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = `cell ${grid[i][j] ? 'on' : 'off'}`;
+                    cell.onclick = () => cellClicked(i, j);
+                    gridContainer.appendChild(cell);
+                }
+            }
+
+            // Update status
+            document.getElementById('moveCount').textContent = moveCount;
+
+            const messageEl = document.getElementById('message');
+            if (isGameWon()) {
+                playWinSound();
+                document.getElementById('status').textContent = 'WON!';
+                messageEl.textContent = `You won in ${moveCount} moves!`;
+                messageEl.style.color = '#ffed4e';
+            } else {
+                document.getElementById('status').textContent = 'Playing';
+                messageEl.textContent = '';
+            }
+        }
+
+        function newGame() {
+            initializeGame();
+            document.getElementById('message').textContent = '';
+        }
+
+        function hint() {
+            let bestRow = -1;
+            let bestCol = -1;
+            let minLightsAfter = countLights() + 1;
+
+            // Try each possible move
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    // Simulate move
+                    toggleCell(i, j);
+                    const lightsAfter = countLights();
+
+                    if (lightsAfter < minLightsAfter) {
+                        minLightsAfter = lightsAfter;
+                        bestRow = i;
+                        bestCol = j;
+                    }
+
+                    // Undo move
+                    toggleCell(i, j);
+                }
+            }
+
+            // Apply best move
+            if (bestRow !== -1) {
+                playClickSound();
+                toggleCell(bestRow, bestCol);
+                moveCount++;
+                updateDisplay();
+            }
+        }
+
+        function countLights() {
+            return grid.reduce((sum, row) => sum + row.filter(cell => cell).length, 0);
+        }
+
+        // Start game
+        initializeGame();
+    </script>
+</body>
+</html>
