@@ -18,7 +18,7 @@ Features
 
 Play Online
 
-The game is deployed and playable at: **link here**
+The game is deployed and playable at: **https://lights-out-html-version.vercel.app/**
 
 Just open in your browser and start playing. No installation required.
 
