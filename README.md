@@ -1,4 +1,4 @@
-# Lights-Out 
+# [Lights-Out](https://lights-out-html-version.vercel.app/) 
 
 A classic 3x3 puzzle game built with vanilla JavaScript, HTML, and CSS. Click cells to toggle lights and their neighbors. Turn all lights off to win. The game features an intelligent hint system, move tracking, sound effects, and a responsive design that works on desktop and mobile.
 
